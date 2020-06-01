@@ -2,8 +2,7 @@ import { HttpResponse, HttpRequest } from '../protocols/http'
 import { EmailValidator } from '../protocols/emailValidator'
 import { Controller } from '../protocols/controller'
 
-import InvalidParamError from '../errors/invalidParamError'
-import MissingParamError from '../errors/missingParamError'
+import { InvalidParamError, MissingParamError } from '../errors'
 
 import { badRequest, serverError } from '../helpers/httpHelper'
 
