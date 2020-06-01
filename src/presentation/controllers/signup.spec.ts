@@ -1,4 +1,5 @@
 import SignUpController from './signup'
+import MissingParamError from '../errors/missingParamError'
 
 describe('SignUp Controller', () => {
   test('deve retornar erro 400 quando o nome não for informado', () => {
@@ -14,7 +15,7 @@ describe('SignUp Controller', () => {
 
     const httpResponse = signupController.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
-    expect(httpResponse.body).toEqual(new Error('Faltando o parâmetro nome'))
+    expect(httpResponse.body).toEqual(new MissingParamError('nome'))
   })
 
   test('deve retornar erro 400 quando o email não for informado', () => {
@@ -31,6 +32,6 @@ describe('SignUp Controller', () => {
 
     const httpResponse = signupController.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
-    expect(httpResponse.body).toEqual(new Error('Faltando o parâmetro email'))
+    expect(httpResponse.body).toEqual(new MissingParamError('email'))
   })
 })
