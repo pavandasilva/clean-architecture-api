@@ -1,26 +1,54 @@
 import SignUpController from './signup'
 import { MissingParamError, InvalidParamError, ServerError } from '../errors'
 import { EmailValidator } from '../protocols'
+import { AddAccountModel, AddAccount } from '../../domain/usecases/addAccount'
+import { AccountModel } from '../../domain/models/account'
 
-const makeSignUpController = (emailIsValid: boolean): any => {
-  class EmailValidatorStub implements EmailValidator {
-    isValid (email: string): boolean {
-      return emailIsValid
-    }
-  }
-
-  const emailValidatorStub = new EmailValidatorStub()
-  const signUpController = new SignUpController(emailValidatorStub)
+const makeSignUpController = (): any => {
+  const emailValidatorStub = makeEmailValidator()
+  const addAccountStub = makeAddAccount()
+  const signUpController = new SignUpController(
+    emailValidatorStub,
+    addAccountStub
+  )
 
   return {
     signUpController,
-    emailValidatorStub
+    emailValidatorStub,
+    addAccountStub
   }
+}
+
+const makeEmailValidator = (): EmailValidator => {
+  class EmailValidatorStub implements EmailValidator {
+    isValid (email: string): boolean {
+      return true
+    }
+  }
+
+  return new EmailValidatorStub()
+}
+
+const makeAddAccount = (): AddAccount => {
+  class AddAccountStub implements AddAccount {
+    add (account: AddAccountModel): AccountModel {
+      const fakeAccount = {
+        id: '1',
+        nome: 'meu nome',
+        email: 'email@email.com',
+        senha: '1234'
+      }
+
+      return fakeAccount
+    }
+  }
+
+  return new AddAccountStub()
 }
 
 describe('SignUp Controller', () => {
   test('deve retornar erro 400 quando o nome não for informado', () => {
-    const { signUpController } = makeSignUpController(true)
+    const { signUpController } = makeSignUpController()
 
     const httpRequest = {
       body: {
@@ -37,7 +65,7 @@ describe('SignUp Controller', () => {
   })
 
   test('deve retornar erro 400 quando o email não for informado', () => {
-    const { signUpController } = makeSignUpController(true)
+    const { signUpController } = makeSignUpController()
 
     const httpRequest = {
       body: {
@@ -54,7 +82,7 @@ describe('SignUp Controller', () => {
   })
 
   test('deve retornar erro 400 quando a senha não for informada', () => {
-    const { signUpController } = makeSignUpController(true)
+    const { signUpController } = makeSignUpController()
 
     const httpRequest = {
       body: {
@@ -71,7 +99,7 @@ describe('SignUp Controller', () => {
   })
 
   test('deve retornar erro 400 quando a confirmacaoSenha não for informada', () => {
-    const { signUpController } = makeSignUpController(true)
+    const { signUpController } = makeSignUpController()
 
     const httpRequest = {
       body: {
@@ -84,11 +112,14 @@ describe('SignUp Controller', () => {
     const httpResponse = signUpController.handle(httpRequest)
 
     expect(httpResponse.statusCode).toBe(400)
-    expect(httpResponse.body).toEqual(new MissingParamError('confirmacaoSenha'))
+    expect(httpResponse.body).toEqual(
+      new MissingParamError('confirmacaoSenha')
+    )
   })
 
   test('deve retornar erro 400 se o email for inválido', () => {
-    const { signUpController } = makeSignUpController(false)
+    const { signUpController, emailValidatorStub } = makeSignUpController()
+    jest.spyOn(emailValidatorStub, 'isValid').mockReturnValue(false)
 
     const httpRequest = {
       body: {
@@ -106,7 +137,7 @@ describe('SignUp Controller', () => {
   })
 
   test('deve chamar a função de validar email com o email correto', () => {
-    const { signUpController, emailValidatorStub } = makeSignUpController(true)
+    const { signUpController, emailValidatorStub } = makeSignUpController()
 
     const isValidSpy = jest.spyOn(emailValidatorStub, 'isValid')
 
@@ -124,7 +155,7 @@ describe('SignUp Controller', () => {
   })
 
   test('deve retornar erro 500 se o email validador tiver excessão', () => {
-    const { signUpController, emailValidatorStub } = makeSignUpController(true)
+    const { signUpController, emailValidatorStub } = makeSignUpController()
 
     jest.spyOn(emailValidatorStub, 'isValid').mockImplementationOnce(() => {
       throw new Error()
@@ -146,7 +177,7 @@ describe('SignUp Controller', () => {
   })
 
   test('deve retornar erro 400 se a confirmação de senha for inválida', () => {
-    const { signUpController } = makeSignUpController(true)
+    const { signUpController } = makeSignUpController()
 
     const httpRequest = {
       body: {
@@ -160,6 +191,29 @@ describe('SignUp Controller', () => {
     const httpResponse = signUpController.handle(httpRequest)
 
     expect(httpResponse.statusCode).toBe(400)
-    expect(httpResponse.body).toEqual(new InvalidParamError('confirmacaoSenha'))
+    expect(httpResponse.body).toEqual(
+      new InvalidParamError('confirmacaoSenha')
+    )
+  })
+  test('deve chamar AddAccount com valores corretos', () => {
+    const { signUpController, addAccountStub } = makeSignUpController()
+    const addSpy = jest.spyOn(addAccountStub, 'add')
+
+    const httpRequest = {
+      body: {
+        nome: 'Nome de teste',
+        email: 'email@email.com',
+        senha: '1234',
+        confirmacaoSenha: '1234'
+      }
+    }
+
+    signUpController.handle(httpRequest)
+
+    expect(addSpy).toHaveBeenCalledWith({
+      nome: 'Nome de teste',
+      email: 'email@email.com',
+      senha: '1234'
+    })
   })
 })
