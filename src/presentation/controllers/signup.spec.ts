@@ -14,6 +14,7 @@ describe('SignUp Controller', () => {
     }
 
     const httpResponse = signupController.handle(httpRequest)
+
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual(new MissingParamError('nome'))
   })
@@ -30,7 +31,42 @@ describe('SignUp Controller', () => {
     }
 
     const httpResponse = signupController.handle(httpRequest)
+
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual(new MissingParamError('email'))
+  })
+
+  test('deve retornar erro 400 quando a senha não for informada', () => {
+    const signupController = new SignUpController()
+
+    const httpRequest = {
+      body: {
+        nome: 'Nome de teste',
+        email: 'Meu email',
+        confirmacao_senha: '1234'
+      }
+    }
+
+    const httpResponse = signupController.handle(httpRequest)
+
+    expect(httpResponse.statusCode).toBe(400)
+    expect(httpResponse.body).toEqual(new MissingParamError('senha'))
+  })
+
+  test('deve retornar erro 400 quando a confirmacao_senha não for informada', () => {
+    const signupController = new SignUpController()
+
+    const httpRequest = {
+      body: {
+        nome: 'Nome de teste',
+        email: 'Meu email',
+        senha: '1234'
+      }
+    }
+
+    const httpResponse = signupController.handle(httpRequest)
+
+    expect(httpResponse.statusCode).toBe(400)
+    expect(httpResponse.body).toEqual(new MissingParamError('confirmacao_senha'))
   })
 })
