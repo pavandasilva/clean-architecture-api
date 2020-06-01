@@ -29,7 +29,7 @@ const makeEmailValidator = (): EmailValidator => {
 
 const makeAddAccount = (): AddAccount => {
   class AddAccountStub implements AddAccount {
-    add (account: AddAccountModel): AccountModel {
+    async add (account: AddAccountModel): Promise<AccountModel> {
       const fakeAccount = {
         id: '1',
         nome: 'meu nome',
@@ -45,7 +45,7 @@ const makeAddAccount = (): AddAccount => {
 }
 
 describe('SignUp Controller', () => {
-  test('deve retornar erro 400 quando o nome não for informado', () => {
+  test('deve retornar erro 400 quando o nome não for informado', async () => {
     const { signUpController } = makeSignUpController()
 
     const httpRequest = {
@@ -56,13 +56,13 @@ describe('SignUp Controller', () => {
       }
     }
 
-    const httpResponse = signUpController.handle(httpRequest)
+    const httpResponse = await signUpController.handle(httpRequest)
 
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual(new MissingParamError('nome'))
   })
 
-  test('deve retornar erro 400 quando o email não for informado', () => {
+  test('deve retornar erro 400 quando o email não for informado', async () => {
     const { signUpController } = makeSignUpController()
 
     const httpRequest = {
@@ -73,13 +73,13 @@ describe('SignUp Controller', () => {
       }
     }
 
-    const httpResponse = signUpController.handle(httpRequest)
+    const httpResponse = await signUpController.handle(httpRequest)
 
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual(new MissingParamError('email'))
   })
 
-  test('deve retornar erro 400 quando a senha não for informada', () => {
+  test('deve retornar erro 400 quando a senha não for informada', async () => {
     const { signUpController } = makeSignUpController()
 
     const httpRequest = {
@@ -90,13 +90,13 @@ describe('SignUp Controller', () => {
       }
     }
 
-    const httpResponse = signUpController.handle(httpRequest)
+    const httpResponse = await signUpController.handle(httpRequest)
 
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual(new MissingParamError('senha'))
   })
 
-  test('deve retornar erro 400 quando a confirmacaoSenha não for informada', () => {
+  test('deve retornar erro 400 quando a confirmacaoSenha não for informada', async () => {
     const { signUpController } = makeSignUpController()
 
     const httpRequest = {
@@ -107,7 +107,7 @@ describe('SignUp Controller', () => {
       }
     }
 
-    const httpResponse = signUpController.handle(httpRequest)
+    const httpResponse = await signUpController.handle(httpRequest)
 
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual(
@@ -115,7 +115,7 @@ describe('SignUp Controller', () => {
     )
   })
 
-  test('deve retornar erro 400 se o email for inválido', () => {
+  test('deve retornar erro 400 se o email for inválido', async () => {
     const { signUpController, emailValidatorStub } = makeSignUpController()
     jest.spyOn(emailValidatorStub, 'isValid').mockReturnValue(false)
 
@@ -128,13 +128,13 @@ describe('SignUp Controller', () => {
       }
     }
 
-    const httpResponse = signUpController.handle(httpRequest)
+    const httpResponse = await signUpController.handle(httpRequest)
 
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual(new InvalidParamError('email'))
   })
 
-  test('deve chamar a função de validar email com o email correto', () => {
+  test('deve chamar a função de validar email com o email correto', async () => {
     const { signUpController, emailValidatorStub } = makeSignUpController()
 
     const isValidSpy = jest.spyOn(emailValidatorStub, 'isValid')
@@ -148,11 +148,11 @@ describe('SignUp Controller', () => {
       }
     }
 
-    signUpController.handle(httpRequest)
+    await signUpController.handle(httpRequest)
     expect(isValidSpy).toHaveBeenCalledWith('email@email.com')
   })
 
-  test('deve retornar erro 500 se o email validador tiver excessão', () => {
+  test('deve retornar erro 500 se o email validador tiver excessão', async () => {
     const { signUpController, emailValidatorStub } = makeSignUpController()
 
     jest.spyOn(emailValidatorStub, 'isValid').mockImplementationOnce(() => {
@@ -168,13 +168,13 @@ describe('SignUp Controller', () => {
       }
     }
 
-    const httpResponse = signUpController.handle(httpRequest)
+    const httpResponse = await signUpController.handle(httpRequest)
 
     expect(httpResponse.statusCode).toBe(500)
     expect(httpResponse.body).toEqual(new ServerError())
   })
 
-  test('deve retornar erro 400 se a confirmação de senha for inválida', () => {
+  test('deve retornar erro 400 se a confirmação de senha for inválida', async () => {
     const { signUpController } = makeSignUpController()
 
     const httpRequest = {
@@ -186,14 +186,14 @@ describe('SignUp Controller', () => {
       }
     }
 
-    const httpResponse = signUpController.handle(httpRequest)
+    const httpResponse = await signUpController.handle(httpRequest)
 
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual(
       new InvalidParamError('confirmacaoSenha')
     )
   })
-  test('deve chamar AddAccount com valores corretos', () => {
+  test('deve chamar AddAccount com valores corretos', async () => {
     const { signUpController, addAccountStub } = makeSignUpController()
     const addSpy = jest.spyOn(addAccountStub, 'add')
 
@@ -206,7 +206,7 @@ describe('SignUp Controller', () => {
       }
     }
 
-    signUpController.handle(httpRequest)
+    await signUpController.handle(httpRequest)
 
     expect(addSpy).toHaveBeenCalledWith({
       nome: 'Nome de teste',
@@ -215,10 +215,10 @@ describe('SignUp Controller', () => {
     })
   })
 
-  test('deve retornar erro 500 se o addAccount tiver excessão', () => {
+  test('deve retornar erro 500 se o addAccount tiver excessão', async () => {
     const { signUpController, addAccountStub } = makeSignUpController()
 
-    jest.spyOn(addAccountStub, 'add').mockImplementationOnce(() => {
+    jest.spyOn(addAccountStub, 'add').mockImplementationOnce(async () => {
       throw new Error()
     })
 
@@ -231,13 +231,13 @@ describe('SignUp Controller', () => {
       }
     }
 
-    const httpResponse = signUpController.handle(httpRequest)
+    const httpResponse = await signUpController.handle(httpRequest)
 
     expect(httpResponse.statusCode).toBe(500)
     expect(httpResponse.body).toEqual(new ServerError())
   })
 
-  test('deve retornar 200 se os dados passados são válidos', () => {
+  test('deve retornar 200 se os dados passados são válidos', async () => {
     const { signUpController } = makeSignUpController()
 
     const httpRequest = {
@@ -249,7 +249,7 @@ describe('SignUp Controller', () => {
       }
     }
 
-    const httpResponse = signUpController.handle(httpRequest)
+    const httpResponse = await signUpController.handle(httpRequest)
 
     expect(httpResponse.statusCode).toBe(200)
 
