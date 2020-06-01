@@ -1,9 +1,11 @@
 import SignUpController from './signup'
 import MissingParamError from '../errors/missingParamError'
 
+const makeSignUpController = (): SignUpController => new SignUpController()
+
 describe('SignUp Controller', () => {
   test('deve retornar erro 400 quando o nome não for informado', () => {
-    const signupController = new SignUpController()
+    const signupController = makeSignUpController()
 
     const httpRequest = {
       body: {
@@ -20,7 +22,7 @@ describe('SignUp Controller', () => {
   })
 
   test('deve retornar erro 400 quando o email não for informado', () => {
-    const signupController = new SignUpController()
+    const signupController = makeSignUpController()
 
     const httpRequest = {
       body: {
@@ -37,7 +39,7 @@ describe('SignUp Controller', () => {
   })
 
   test('deve retornar erro 400 quando a senha não for informada', () => {
-    const signupController = new SignUpController()
+    const signupController = makeSignUpController()
 
     const httpRequest = {
       body: {
@@ -54,7 +56,7 @@ describe('SignUp Controller', () => {
   })
 
   test('deve retornar erro 400 quando a confirmacao_senha não for informada', () => {
-    const signupController = new SignUpController()
+    const signupController = makeSignUpController()
 
     const httpRequest = {
       body: {
