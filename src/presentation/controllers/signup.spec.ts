@@ -144,4 +144,22 @@ describe('SignUp Controller', () => {
     expect(httpResponse.statusCode).toBe(500)
     expect(httpResponse.body).toEqual(new ServerError())
   })
+
+  test('deve retornar erro 400 se a confirmação de senha for inválida', () => {
+    const { signUpController } = makeSignUpController(true)
+
+    const httpRequest = {
+      body: {
+        nome: 'Nome de teste',
+        email: 'email@email.com',
+        senha: '1234',
+        confirmacao_senha: 'invalido'
+      }
+    }
+
+    const httpResponse = signUpController.handle(httpRequest)
+
+    expect(httpResponse.statusCode).toBe(400)
+    expect(httpResponse.body).toEqual(new InvalidParamError('confirmacao_senha'))
+  })
 })
