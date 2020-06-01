@@ -27,7 +27,6 @@ describe('SignUp Controller', () => {
         senha: '1234',
         confirmacao_senha: '1234'
       }
-
     }
 
     const httpResponse = signupController.handle(httpRequest)
