@@ -236,4 +236,28 @@ describe('SignUp Controller', () => {
     expect(httpResponse.statusCode).toBe(500)
     expect(httpResponse.body).toEqual(new ServerError())
   })
+
+  test('deve retornar 200 se os dados passados são válidos', () => {
+    const { signUpController } = makeSignUpController()
+
+    const httpRequest = {
+      body: {
+        nome: 'meu nome',
+        email: 'email@email.com',
+        senha: '1234',
+        confirmacaoSenha: '1234'
+      }
+    }
+
+    const httpResponse = signUpController.handle(httpRequest)
+
+    expect(httpResponse.statusCode).toBe(200)
+
+    expect(httpResponse.body).toEqual({
+      id: '1',
+      nome: 'meu nome',
+      email: 'email@email.com',
+      senha: '1234'
+    })
+  })
 })
