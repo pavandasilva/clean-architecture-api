@@ -214,4 +214,26 @@ describe('SignUp Controller', () => {
       senha: '1234'
     })
   })
+
+  test('deve retornar erro 500 se o addAccount tiver excessão', () => {
+    const { signUpController, addAccountStub } = makeSignUpController()
+
+    jest.spyOn(addAccountStub, 'add').mockImplementationOnce(() => {
+      throw new Error()
+    })
+
+    const httpRequest = {
+      body: {
+        nome: 'Nome de teste',
+        email: 'Meu email',
+        senha: '1234',
+        confirmacaoSenha: '1234'
+      }
+    }
+
+    const httpResponse = signUpController.handle(httpRequest)
+
+    expect(httpResponse.statusCode).toBe(500)
+    expect(httpResponse.body).toEqual(new ServerError())
+  })
 })
