@@ -6,11 +6,12 @@ describe('SignUp Controller', () => {
 
     const httpRequest = {
       email: 'email@email.com',
-      password: '1234',
-      passwordConfirmation: '1234'
+      senha: '1234',
+      confirmacao_senha: '1234'
     }
 
     const httpResponse = signupController.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
+    expect(httpResponse.body).toEqual(new Error('Faltando o parâmetro nome'))
   })
 })
