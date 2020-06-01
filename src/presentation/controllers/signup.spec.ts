@@ -124,14 +124,11 @@ describe('SignUp Controller', () => {
   })
 
   test('deve retornar erro 500 se o email validador tiver excessão', () => {
-    class EmailValidatorStub implements EmailValidator {
-      isValid (email: string): boolean {
-        throw new Error()
-      }
-    }
+    const { signUpController, emailValidatorStub } = makeSignUpController(true)
 
-    const emailValidatorStub = new EmailValidatorStub()
-    const signUpController = new SignUpController(emailValidatorStub)
+    jest.spyOn(emailValidatorStub, 'isValid').mockImplementationOnce(() => {
+      throw new Error()
+    })
 
     const httpRequest = {
       body: {
