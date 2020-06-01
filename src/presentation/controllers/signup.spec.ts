@@ -26,7 +26,7 @@ describe('SignUp Controller', () => {
       body: {
         email: 'email@email.com',
         senha: '1234',
-        confirmacao_senha: '1234'
+        confirmacaoSenha: '1234'
       }
     }
 
@@ -43,7 +43,7 @@ describe('SignUp Controller', () => {
       body: {
         nome: 'Nome de teste',
         senha: '1234',
-        confirmacao_senha: '1234'
+        confirmacaoSenha: '1234'
       }
     }
 
@@ -60,7 +60,7 @@ describe('SignUp Controller', () => {
       body: {
         nome: 'Nome de teste',
         email: 'email@email.com',
-        confirmacao_senha: '1234'
+        confirmacaoSenha: '1234'
       }
     }
 
@@ -70,7 +70,7 @@ describe('SignUp Controller', () => {
     expect(httpResponse.body).toEqual(new MissingParamError('senha'))
   })
 
-  test('deve retornar erro 400 quando a confirmacao_senha não for informada', () => {
+  test('deve retornar erro 400 quando a confirmacaoSenha não for informada', () => {
     const { signUpController } = makeSignUpController(true)
 
     const httpRequest = {
@@ -84,7 +84,7 @@ describe('SignUp Controller', () => {
     const httpResponse = signUpController.handle(httpRequest)
 
     expect(httpResponse.statusCode).toBe(400)
-    expect(httpResponse.body).toEqual(new MissingParamError('confirmacao_senha'))
+    expect(httpResponse.body).toEqual(new MissingParamError('confirmacaoSenha'))
   })
 
   test('deve retornar erro 400 se o email for inválido', () => {
@@ -95,7 +95,7 @@ describe('SignUp Controller', () => {
         nome: 'Nome de teste',
         email: 'Meu email',
         senha: '1234',
-        confirmacao_senha: '1234'
+        confirmacaoSenha: '1234'
       }
     }
 
@@ -115,7 +115,7 @@ describe('SignUp Controller', () => {
         nome: 'Nome de teste',
         email: 'email@email.com',
         senha: '1234',
-        confirmacao_senha: '1234'
+        confirmacaoSenha: '1234'
       }
     }
 
@@ -135,7 +135,7 @@ describe('SignUp Controller', () => {
         nome: 'Nome de teste',
         email: 'Meu email',
         senha: '1234',
-        confirmacao_senha: '1234'
+        confirmacaoSenha: '1234'
       }
     }
 
@@ -153,13 +153,13 @@ describe('SignUp Controller', () => {
         nome: 'Nome de teste',
         email: 'email@email.com',
         senha: '1234',
-        confirmacao_senha: 'invalido'
+        confirmacaoSenha: 'invalido'
       }
     }
 
     const httpResponse = signUpController.handle(httpRequest)
 
     expect(httpResponse.statusCode).toBe(400)
-    expect(httpResponse.body).toEqual(new InvalidParamError('confirmacao_senha'))
+    expect(httpResponse.body).toEqual(new InvalidParamError('confirmacaoSenha'))
   })
 })
