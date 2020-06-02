@@ -10,8 +10,12 @@ describe('accountRepository', () => {
     await MongoHelper.disconnect()
   })
 
-  test('deve retornar um account quando os dados forem inseridos ', async () => {
-    const sut = new AccountMongoRepository()
+  const makeSut = (): AccountMongoRepository => {
+    return new AccountMongoRepository()
+  }
+
+  test('deve retornar um account quando os dados forem inseridos', async () => {
+    const sut = makeSut()
 
     const account = await sut.add({
       nome: 'nome',
