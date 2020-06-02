@@ -5,5 +5,7 @@ module.exports = {
   testEnvironment: 'node',
   transform: {
     '.*\\.ts$': 'ts-jest'
-  }
+  },
+  coveragePathIgnorePatterns: ['node_modules', 'test-config', 'interfaces'],
+  preset: '@shelf/jest-mongodb'
 }
