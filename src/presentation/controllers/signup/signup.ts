@@ -13,7 +13,7 @@ class SignUpController implements Controller {
 
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
-      const requiredFields = ['nome', 'email', 'senha', 'confirmacaoSenha']
+      const requiredFields = ['name', 'email', 'password', 'passwordConfirmation']
 
       for (const field of requiredFields) {
         if (!httpRequest.body[field]) {
@@ -21,10 +21,10 @@ class SignUpController implements Controller {
         }
       }
 
-      const { nome, senha, confirmacaoSenha, email } = httpRequest.body
+      const { name, password, passwordConfirmation, email } = httpRequest.body
 
-      if (senha !== confirmacaoSenha) {
-        return badRequest(new InvalidParamError('confirmacaoSenha'))
+      if (password !== passwordConfirmation) {
+        return badRequest(new InvalidParamError('passwordConfirmation'))
       }
 
       const isValid = this.emailValidator.isValid(email)
@@ -34,9 +34,9 @@ class SignUpController implements Controller {
       }
 
       const account = await this.addAccount.add({
-        nome,
+        name,
         email,
-        senha
+        password
       })
 
       return ok(account)

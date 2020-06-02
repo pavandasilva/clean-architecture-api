@@ -18,17 +18,17 @@ describe('accountRepository', () => {
     const sut = makeSut()
 
     const account = await sut.add({
-      nome: 'nome',
+      name: 'name',
       email: 'email',
-      senha: 'senha'
+      password: 'password'
     })
 
-    const { id, nome, email, senha } = account
+    const { id, name, email, password } = account
 
     expect(account).toBeTruthy()
     expect(id).toBeTruthy()
-    expect(nome).toBe('nome')
+    expect(name).toBe('name')
     expect(email).toBe('email')
-    expect(senha).toBe('senha')
+    expect(password).toBe('password')
   })
 })

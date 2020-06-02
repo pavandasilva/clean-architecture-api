@@ -32,9 +32,9 @@ const makeAddAccount = (): AddAccount => {
     async add (account: AddAccountModel): Promise<AccountModel> {
       const fakeAccount = {
         id: '1',
-        nome: 'meu nome',
+        name: 'myname',
         email: 'email@email.com',
-        senha: '1234'
+        password: '1234'
       }
 
       return fakeAccount
@@ -45,21 +45,21 @@ const makeAddAccount = (): AddAccount => {
 }
 
 describe('SignUp Controller', () => {
-  test('deve retornar erro 400 quando o nome não for informado', async () => {
+  test('deve retornar erro 400 quando o name não for informado', async () => {
     const { signUpController } = makeSignUpController()
 
     const httpRequest = {
       body: {
         email: 'email@email.com',
-        senha: '1234',
-        confirmacaoSenha: '1234'
+        password: '1234',
+        passwordConfirmation: '1234'
       }
     }
 
     const httpResponse = await signUpController.handle(httpRequest)
 
     expect(httpResponse.statusCode).toBe(400)
-    expect(httpResponse.body).toEqual(new MissingParamError('nome'))
+    expect(httpResponse.body).toEqual(new MissingParamError('name'))
   })
 
   test('deve retornar erro 400 quando o email não for informado', async () => {
@@ -67,9 +67,9 @@ describe('SignUp Controller', () => {
 
     const httpRequest = {
       body: {
-        nome: 'Nome de teste',
-        senha: '1234',
-        confirmacaoSenha: '1234'
+        name: 'myname',
+        password: '1234',
+        passwordConfirmation: '1234'
       }
     }
 
@@ -79,31 +79,31 @@ describe('SignUp Controller', () => {
     expect(httpResponse.body).toEqual(new MissingParamError('email'))
   })
 
-  test('deve retornar erro 400 quando a senha não for informada', async () => {
+  test('deve retornar erro 400 quando a password não for informada', async () => {
     const { signUpController } = makeSignUpController()
 
     const httpRequest = {
       body: {
-        nome: 'Nome de teste',
+        name: 'myname',
         email: 'email@email.com',
-        confirmacaoSenha: '1234'
+        passwordConfirmation: '1234'
       }
     }
 
     const httpResponse = await signUpController.handle(httpRequest)
 
     expect(httpResponse.statusCode).toBe(400)
-    expect(httpResponse.body).toEqual(new MissingParamError('senha'))
+    expect(httpResponse.body).toEqual(new MissingParamError('password'))
   })
 
-  test('deve retornar erro 400 quando a confirmacaoSenha não for informada', async () => {
+  test('deve retornar erro 400 quando a passwordConfirmation não for informada', async () => {
     const { signUpController } = makeSignUpController()
 
     const httpRequest = {
       body: {
-        nome: 'Nome de teste',
+        name: 'myname',
         email: 'email@email.com',
-        senha: '1234'
+        password: '1234'
       }
     }
 
@@ -111,7 +111,7 @@ describe('SignUp Controller', () => {
 
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual(
-      new MissingParamError('confirmacaoSenha')
+      new MissingParamError('passwordConfirmation')
     )
   })
 
@@ -121,10 +121,10 @@ describe('SignUp Controller', () => {
 
     const httpRequest = {
       body: {
-        nome: 'Nome de teste',
-        email: 'Meu email',
-        senha: '1234',
-        confirmacaoSenha: '1234'
+        name: 'myname',
+        email: 'myemail',
+        password: '1234',
+        passwordConfirmation: '1234'
       }
     }
 
@@ -134,17 +134,17 @@ describe('SignUp Controller', () => {
     expect(httpResponse.body).toEqual(new InvalidParamError('email'))
   })
 
-  test('deve chamar a função de validar email com o email correto', async () => {
+  test('deve passar o email correto para a função de validar email', async () => {
     const { signUpController, emailValidatorStub } = makeSignUpController()
 
     const isValidSpy = jest.spyOn(emailValidatorStub, 'isValid')
 
     const httpRequest = {
       body: {
-        nome: 'Nome de teste',
+        name: 'myname',
         email: 'email@email.com',
-        senha: '1234',
-        confirmacaoSenha: '1234'
+        password: '1234',
+        passwordConfirmation: '1234'
       }
     }
 
@@ -161,10 +161,10 @@ describe('SignUp Controller', () => {
 
     const httpRequest = {
       body: {
-        nome: 'Nome de teste',
-        email: 'Meu email',
-        senha: '1234',
-        confirmacaoSenha: '1234'
+        name: 'myname',
+        email: 'myemail',
+        password: '1234',
+        passwordConfirmation: '1234'
       }
     }
 
@@ -174,15 +174,15 @@ describe('SignUp Controller', () => {
     expect(httpResponse.body).toEqual(new ServerError())
   })
 
-  test('deve retornar erro 400 se a confirmação de senha for inválida', async () => {
+  test('deve retornar erro 400 se a confirmação de password for inválida', async () => {
     const { signUpController } = makeSignUpController()
 
     const httpRequest = {
       body: {
-        nome: 'Nome de teste',
+        name: 'myname',
         email: 'email@email.com',
-        senha: '1234',
-        confirmacaoSenha: 'invalido'
+        password: '1234',
+        passwordConfirmation: 'invalid'
       }
     }
 
@@ -190,7 +190,7 @@ describe('SignUp Controller', () => {
 
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual(
-      new InvalidParamError('confirmacaoSenha')
+      new InvalidParamError('passwordConfirmation')
     )
   })
   test('deve chamar AddAccount com valores corretos', async () => {
@@ -199,19 +199,19 @@ describe('SignUp Controller', () => {
 
     const httpRequest = {
       body: {
-        nome: 'Nome de teste',
+        name: 'myname',
         email: 'email@email.com',
-        senha: '1234',
-        confirmacaoSenha: '1234'
+        password: '1234',
+        passwordConfirmation: '1234'
       }
     }
 
     await signUpController.handle(httpRequest)
 
     expect(addSpy).toHaveBeenCalledWith({
-      nome: 'Nome de teste',
+      name: 'myname',
       email: 'email@email.com',
-      senha: '1234'
+      password: '1234'
     })
   })
 
@@ -224,10 +224,10 @@ describe('SignUp Controller', () => {
 
     const httpRequest = {
       body: {
-        nome: 'Nome de teste',
-        email: 'Meu email',
-        senha: '1234',
-        confirmacaoSenha: '1234'
+        name: 'myname',
+        email: 'myemail',
+        password: '1234',
+        passwordConfirmation: '1234'
       }
     }
 
@@ -242,10 +242,10 @@ describe('SignUp Controller', () => {
 
     const httpRequest = {
       body: {
-        nome: 'meu nome',
+        name: 'myname',
         email: 'email@email.com',
-        senha: '1234',
-        confirmacaoSenha: '1234'
+        password: '1234',
+        passwordConfirmation: '1234'
       }
     }
 
@@ -255,9 +255,9 @@ describe('SignUp Controller', () => {
 
     expect(httpResponse.body).toEqual({
       id: '1',
-      nome: 'meu nome',
+      name: 'myname',
       email: 'email@email.com',
-      senha: '1234'
+      password: '1234'
     })
   })
 })

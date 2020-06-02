@@ -1,5 +1,10 @@
 import { DbAddAccount } from './dbAddAccount'
-import { Encrypter, AddAccountModel, AccountModel, AddAccountRepository } from './dbAddAccountProtocols'
+import {
+  Encrypter,
+  AddAccountModel,
+  AccountModel,
+  AddAccountRepository
+} from './dbAddAccountProtocols'
 
 interface SutTypes {
   sut: DbAddAccount
@@ -10,7 +15,7 @@ interface SutTypes {
 const makeEncrypter = (): Encrypter => {
   class EncrypterStub implements Encrypter {
     async encrypt (value: string): Promise<string> {
-      return 'senha_encriptografada'
+      return 'password_encriptografada'
     }
   }
   return new EncrypterStub()
@@ -21,9 +26,9 @@ const makeAddAccountRepository = (): AddAccountRepository => {
     async add (account: AddAccountModel): Promise<AccountModel> {
       const fakeAccount = {
         id: 'id_valido',
-        nome: 'nome_valido',
+        name: 'name_valido',
         email: 'email_valido',
-        senha: 'senha_criptografada'
+        password: 'password_criptografada'
       }
 
       return fakeAccount
@@ -45,27 +50,29 @@ const makeSut = (): any => {
 }
 
 describe('dbAddAccount UseCase', () => {
-  test('deve chamar o encrypter com uma senha correta', async () => {
+  test('deve chamar o encrypter com uma password correta', async () => {
     const { sut, encrypterStub } = makeSut()
     const encryptSpy = jest.spyOn(encrypterStub, 'encrypt')
 
     const accountData = {
-      nome: 'nomevalido',
+      name: 'namevalido',
       email: 'emailvalido',
-      senha: 'senhavalida'
+      password: 'passwordvalida'
     }
     await sut.add(accountData)
-    expect(encryptSpy).toHaveBeenCalledWith('senhavalida')
+    expect(encryptSpy).toHaveBeenCalledWith('passwordvalida')
   })
 
   test('deve retornar uma excessão se o Encrypter tiver uma excessão', async () => {
     const { sut, encrypterStub } = makeSut()
-    jest.spyOn(encrypterStub, 'encrypt').mockReturnValueOnce(Promise.reject(new Error()))
+    jest
+      .spyOn(encrypterStub, 'encrypt')
+      .mockReturnValueOnce(Promise.reject(new Error()))
 
     const accountData = {
-      nome: 'nomevalido',
+      name: 'namevalido',
       email: 'emailvalido',
-      senha: 'senhavalida'
+      password: 'passwordvalida'
     }
     const promise = sut.add(accountData)
     await expect(promise).rejects.toThrow()
@@ -76,28 +83,30 @@ describe('dbAddAccount UseCase', () => {
     const addSpy = jest.spyOn(addAccountRepositoryStub, 'add')
 
     const accountData = {
-      nome: 'nomevalido',
+      name: 'namevalido',
       email: 'emailvalido',
-      senha: 'senhavalida'
+      password: 'passwordvalida'
     }
 
     await sut.add(accountData)
 
     expect(addSpy).toHaveBeenCalledWith({
-      nome: 'nomevalido',
+      name: 'namevalido',
       email: 'emailvalido',
-      senha: 'senha_encriptografada'
+      password: 'password_encriptografada'
     })
   })
 
   test('deve retornar uma excessão se o addAccountRepositoryStub tiver uma excessão', async () => {
     const { sut, addAccountRepositoryStub } = makeSut()
-    jest.spyOn(addAccountRepositoryStub, 'add').mockReturnValueOnce(Promise.reject(new Error()))
+    jest
+      .spyOn(addAccountRepositoryStub, 'add')
+      .mockReturnValueOnce(Promise.reject(new Error()))
 
     const accountData = {
-      nome: 'nomevalido',
+      name: 'namevalido',
       email: 'emailvalido',
-      senha: 'senhavalida'
+      password: 'passwordvalida'
     }
     const promise = sut.add(accountData)
     await expect(promise).rejects.toThrow()
@@ -107,17 +116,17 @@ describe('dbAddAccount UseCase', () => {
     const { sut } = makeSut()
 
     const accountData = {
-      nome: 'nome_valido',
+      name: 'name_valido',
       email: 'email_valido',
-      senha: 'senha_valida'
+      password: 'password_valida'
     }
     const account = await sut.add(accountData)
 
     expect(account).toEqual({
       id: 'id_valido',
-      nome: 'nome_valido',
+      name: 'name_valido',
       email: 'email_valido',
-      senha: 'senha_criptografada'
+      password: 'password_criptografada'
     })
   })
 })
