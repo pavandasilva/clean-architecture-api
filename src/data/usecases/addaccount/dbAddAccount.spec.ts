@@ -89,4 +89,17 @@ describe('dbAddAccount UseCase', () => {
       senha: 'senha_encriptografada'
     })
   })
+
+  test('deve retornar uma excessão se o addAccountRepositoryStub tiver uma excessão', async () => {
+    const { sut, addAccountRepositoryStub } = makeSut()
+    jest.spyOn(addAccountRepositoryStub, 'add').mockReturnValueOnce(Promise.reject(new Error()))
+
+    const accountData = {
+      nome: 'nomevalido',
+      email: 'emailvalido',
+      senha: 'senhavalida'
+    }
+    const promise = sut.add(accountData)
+    await expect(promise).rejects.toThrow()
+  })
 })
