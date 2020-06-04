@@ -1,8 +1,7 @@
-import express from 'express'
+import app from './config/app'
 
 const serverPort = 5050
 
-const app = express()
 app.listen(serverPort, () =>
   console.log(`Servidor rodando na porta ${serverPort}`)
 )
