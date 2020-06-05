@@ -1,7 +1,10 @@
-import app from './config/app'
+import { MongoHelper } from '../infra/db/mongodb/helpers/mongoHelper'
+import env from './config/env'
 
-const serverPort = 5050
-
-app.listen(serverPort, () =>
-  console.log(`Servidor rodando na porta ${serverPort}`)
-)
+// eslint-disable-next-line @typescript-eslint/no-floating-promises
+MongoHelper.connect(env.mongoUrl).then(async () => {
+  const app = (await import('./config/app')).default
+  app.listen(env.port, () =>
+    console.log(`Servidor rodando na porta ${env.port}`)
+  )
+})
