@@ -171,7 +171,7 @@ describe('SignUp Controller', () => {
     const httpResponse = await signUpController.handle(httpRequest)
 
     expect(httpResponse.statusCode).toBe(500)
-    expect(httpResponse.body).toEqual(new ServerError())
+    expect(httpResponse.body).toEqual(new ServerError('error'))
   })
 
   test('deve retornar erro 400 se a confirmação de password for inválida', async () => {
@@ -234,7 +234,7 @@ describe('SignUp Controller', () => {
     const httpResponse = await signUpController.handle(httpRequest)
 
     expect(httpResponse.statusCode).toBe(500)
-    expect(httpResponse.body).toEqual(new ServerError())
+    expect(httpResponse.body).toEqual(new ServerError('error'))
   })
 
   test('deve retornar 200 se os dados passados são válidos', async () => {
